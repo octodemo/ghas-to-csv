@@ -17,7 +17,7 @@ Outputs:
 """
 
 # Import modules
-from src import code_scanning, dependabot, enterprise, secret_scanning
+from src import code_scanning, dependabot, enterprise, secret_scanning, api_helpers
 import os
 
 # Possible strings indicating feature is not enabled
@@ -69,15 +69,24 @@ if __name__ == "__main__":
             if version.startswith("3.5") or version.startswith("3.6"):
                 repo_list = enterprise.get_repo_report(url, github_pat)
                 cs_list = code_scanning.list_enterprise_server_cs_alerts(api_endpoint, github_pat, repo_list)
-                code_scanning.write_enterprise_server_cs_list(cs_list)
+                # Call get_repo_properties for each repo in the list and pass the properties to the write function
+                for repo_name in repo_list:
+                    properties = api_helpers.get_repo_properties(repo_name)
+                    code_scanning.write_enterprise_server_cs_list(cs_list, properties)
             else:
                 cs_list = code_scanning.list_enterprise_cloud_cs_alerts(api_endpoint, github_pat, scope_name)
-                code_scanning.write_enterprise_cloud_cs_list(cs_list)
+                # Call get_repo_properties for each repo in the list and pass the properties to the write function
+                for repo_name in cs_list:
+                    properties = api_helpers.get_repo_properties(repo_name)
+                    code_scanning.write_enterprise_cloud_cs_list(cs_list, properties)
         # dependabot alerts
         if "dependabot" in features:
             try:
                 dependabot_list = dependabot.list_enterprise_dependabot_alerts(api_endpoint, github_pat, scope_name)
-                dependabot.write_org_or_enterprise_dependabot_list(dependabot_list)
+                # Call get_repo_properties for each repo in the list and pass the properties to the write function
+                for repo_name in dependabot_list:
+                    properties = api_helpers.get_repo_properties(repo_name)
+                    dependabot.write_org_or_enterprise_dependabot_list(dependabot_list, properties)
             except Exception as e:
                 if any(x in str(e).lower() for x in dependabot_disabled_strings):
                     print("Skipping Dependabot as it is not enabled.")
@@ -89,12 +98,18 @@ if __name__ == "__main__":
         # code scanning
         if "codescanning" in features:
             cs_list = code_scanning.list_org_cs_alerts(api_endpoint, github_pat, scope_name)
-            code_scanning.write_org_cs_list(cs_list)
+            # Call get_repo_properties for each repo in the list and pass the properties to the write function
+            for repo_name in cs_list:
+                properties = api_helpers.get_repo_properties(repo_name)
+                code_scanning.write_org_cs_list(cs_list, properties)
         # dependabot alerts
         if "dependabot" in features:
             try:
                 dependabot_list = dependabot.list_org_dependabot_alerts(api_endpoint, github_pat, scope_name)
-                dependabot.write_org_or_enterprise_dependabot_list(dependabot_list)
+                # Call get_repo_properties for each repo in the list and pass the properties to the write function
+                for repo_name in dependabot_list:
+                    properties = api_helpers.get_repo_properties(repo_name)
+                    dependabot.write_org_or_enterprise_dependabot_list(dependabot_list, properties)
             except Exception as e:
                 if any(x in str(e).lower() for x in dependabot_disabled_strings):
                     print("Skipping Dependabot as it is not enabled.")
@@ -105,7 +120,10 @@ if __name__ == "__main__":
         if "secretscanning" in features:
             try:
                 secrets_list = secret_scanning.get_org_ss_alerts(api_endpoint, github_pat, scope_name)
-                secret_scanning.write_org_ss_list(secrets_list)
+                # Call get_repo_properties for each repo in the list and pass the properties to the write function
+                for repo_name in secrets_list:
+                    properties = api_helpers.get_repo_properties(repo_name)
+                    secret_scanning.write_org_ss_list(secrets_list, properties)
             except Exception as e:
                 if any(x in str(e).lower() for x in secret_scanning_disabled_strings):
                     print("Skipping Secret Scanning as it is not enabled.")
@@ -117,12 +135,16 @@ if __name__ == "__main__":
         # code scanning
         if "codescanning" in features:
             cs_list = code_scanning.list_repo_cs_alerts(api_endpoint, github_pat, scope_name)
-            code_scanning.write_repo_cs_list(cs_list)
+            # Call get_repo_properties for the repo and pass the properties to the write function
+            properties = api_helpers.get_repo_properties(scope_name)
+            code_scanning.write_repo_cs_list(cs_list, properties)
         # dependabot alerts
         if "dependabot" in features:
             try:
                 dependabot_list = dependabot.list_repo_dependabot_alerts(api_endpoint, github_pat, scope_name)
-                dependabot.write_repo_dependabot_list(dependabot_list)
+                # Call get_repo_properties for the repo and pass the properties to the write function
+                properties = api_helpers.get_repo_properties(scope_name)
+                dependabot.write_repo_dependabot_list(dependabot_list, properties)
             except Exception as e:
                 if any(x in str(e).lower() for x in dependabot_disabled_strings):
                     print("Skipping Dependabot as it is not enabled.")
@@ -133,7 +155,9 @@ if __name__ == "__main__":
         if "secretscanning" in features:
             try:
                 secrets_list = secret_scanning.get_repo_ss_alerts(api_endpoint, github_pat, scope_name)
-                secret_scanning.write_repo_ss_list(secrets_list)
+                # Call get_repo_properties for the repo and pass the properties to the write function
+                properties = api_helpers.get_repo_properties(scope_name)
+                secret_scanning.write_repo_ss_list(secrets_list, properties)
             except Exception as e:
                 if any(x in str(e).lower() for x in secret_scanning_disabled_strings):
                     print("Skipping Secret Scanning as it is not enabled.")

@@ -23,12 +23,13 @@ def list_repo_cs_alerts(api_endpoint, github_pat, repo_name):
     return code_scanning_alerts
 
 
-def write_repo_cs_list(cs_list):
+def write_repo_cs_list(cs_list, properties):
     """
     Write a list of code scanning alerts to a csv file.
 
     Inputs:
     - List of code scanning alerts
+    - Dictionary of custom property names and values
 
     Outputs:
     - CSV file of code scanning alerts
@@ -36,6 +37,7 @@ def write_repo_cs_list(cs_list):
 
     with open("cs_list.csv", "w") as f:
         writer = csv.writer(f)
+        # Append the custom property names to the header row
         writer.writerow(
             [
                 "number",
@@ -59,8 +61,10 @@ def write_repo_cs_list(cs_list):
                 "most_recent_instance_sha",
                 "instances_url",
             ]
+            + list(properties.keys())
         )
         for cs in cs_list:
+            # Append the custom property values to the data row
             writer.writerow(
                 [
                     cs["number"],
@@ -84,6 +88,7 @@ def write_repo_cs_list(cs_list):
                     cs["most_recent_instance"]["commit_sha"],
                     cs["instances_url"],
                 ]
+                + list(properties.values())
             )
 
 
@@ -106,12 +111,13 @@ def list_org_cs_alerts(api_endpoint, github_pat, org_name):
     return code_scanning_alerts
 
 
-def write_org_cs_list(cs_list):
+def write_org_cs_list(cs_list, properties):
     """
     Write a list of code scanning alerts to a csv file.
 
     Inputs:
     - List of code scanning alerts
+    - Dictionary of custom property names and values
 
     Outputs:
     - CSV file of code scanning alerts
@@ -120,6 +126,7 @@ def write_org_cs_list(cs_list):
     # Write code scanning alerts to csv file
     with open("cs_list.csv", "w") as f:
         writer = csv.writer(f)
+        # Append the custom property names to the header row
         writer.writerow(
             [
                 "number",
@@ -150,8 +157,10 @@ def write_org_cs_list(cs_list):
                 "repo_isfork",
                 "repo_isprivate",
             ]
+            + list(properties.keys())
         )
         for cs in cs_list:
+            # Append the custom property values to the data row
             writer.writerow(
                 [
                     cs["number"],
@@ -182,6 +191,7 @@ def write_org_cs_list(cs_list):
                     str(cs["repository"]["fork"]),
                     str(cs["repository"]["private"]),
                 ]
+                + list(properties.values())
             )
 
 
@@ -214,13 +224,14 @@ def list_enterprise_server_cs_alerts(api_endpoint, github_pat, repo_list):
     return alerts
 
 
-def write_enterprise_server_cs_list(cs_list):
+def write_enterprise_server_cs_list(cs_list, properties):
     """
     Write a list of code scanning alerts to a csv file.
 
     Inputs:
     - List from list_enterprise_code_scanning_alerts function, which contains
         strings and lists of dictionaries for the alerts.
+    - Dictionary of custom property names and values
 
     Outputs:
     - CSV file of code scanning alerts
@@ -231,6 +242,7 @@ def write_enterprise_server_cs_list(cs_list):
         if type(alert_list) == list:
             with open("cs_list.csv", "a") as f:
                 writer = csv.writer(f)
+                # Append the custom property names to the header row
                 writer.writerow(
                     [
                         "repository",
@@ -256,8 +268,10 @@ def write_enterprise_server_cs_list(cs_list):
                         "most_recent_instance_sha",
                         "instances_url",
                     ]
+                    + list(properties.keys())
                 )
                 for cs in alert_list:  # loop through each alert in the list
+                    # Append the custom property values to the data row
                     writer.writerow(
                         [
                             cs["repository"]["full_name"],
@@ -283,6 +297,7 @@ def write_enterprise_server_cs_list(cs_list):
                             cs["most_recent_instance"]["commit_sha"],
                             cs["instances_url"],
                         ]
+                        + list(properties.values())
                     )
         else:
             with open("excluded_repos.csv", "a") as g:
@@ -308,13 +323,14 @@ def list_enterprise_cloud_cs_alerts(api_endpoint, github_pat, enterprise_slug):
     return code_scanning_alerts
 
 
-def write_enterprise_cloud_cs_list(cs_list):
+def write_enterprise_cloud_cs_list(cs_list, properties):
     """
     Write a list of code scanning alerts to a csv file.
 
     Inputs:
     - List from list_enterprise_code_scanning_alerts function, which contains
         strings and lists of dictionaries for the alerts.
+    - Dictionary of custom property names and values
 
     Outputs:
     - CSV file of code scanning alerts
@@ -323,6 +339,7 @@ def write_enterprise_cloud_cs_list(cs_list):
 
     with open("cs_list.csv", "a") as f:
         writer = csv.writer(f)
+        # Append the custom property names to the header row
         writer.writerow(
             [
                 "repository",
@@ -348,8 +365,10 @@ def write_enterprise_cloud_cs_list(cs_list):
                 "most_recent_instance_sha",
                 "instances_url",
             ]
+            + list(properties.keys())
         )
         for cs in cs_list:  # loop through each alert in the list
+            # Append the custom property values to the data row
             writer.writerow(
                 [
                     cs["repository"]["full_name"],
@@ -375,4 +394,5 @@ def write_enterprise_cloud_cs_list(cs_list):
                     cs["most_recent_instance"]["commit_sha"],
                     cs["instances_url"],
                 ]
+                + list(properties.values())
             )
