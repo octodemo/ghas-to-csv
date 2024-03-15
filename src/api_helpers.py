@@ -1,5 +1,5 @@
+from main import api_endpoint
 import requests
-
 
 def make_api_call(url, github_pat):
     headers = {
@@ -16,7 +16,7 @@ def make_api_call(url, github_pat):
     return response_json
 
 # Add a new function to get the custom properties of a repo
-def get_repo_properties(repo_name):
+def get_repo_properties(repo_name, github_pat):
     headers = {
         "Accept": "application/vnd.github+json",
         "Authorization": f"Bearer {github_pat}",

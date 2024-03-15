@@ -19,6 +19,8 @@ Outputs:
 # Import modules
 from src import code_scanning, dependabot, enterprise, secret_scanning, api_helpers
 import os
+from dotenv import load_dotenv
+
 
 # Possible strings indicating feature is not enabled
 secret_scanning_disabled_strings = ["secret scanning is not enabled", "secret scanning is disabled"]
@@ -26,6 +28,7 @@ dependabot_disabled_strings = ["dependabot alerts are not enabled", "dependabot 
 
 # Define the available features
 FEATURES = ["secretscanning", "codescanning", "dependabot"]
+load_dotenv()
 
 # Read in config values
 api_endpoint = os.getenv("GITHUB_API_URL", "https://api.github.com")
@@ -136,14 +139,14 @@ if __name__ == "__main__":
         if "codescanning" in features:
             cs_list = code_scanning.list_repo_cs_alerts(api_endpoint, github_pat, scope_name)
             # Call get_repo_properties for the repo and pass the properties to the write function
-            properties = api_helpers.get_repo_properties(scope_name)
+            properties = api_helpers.get_repo_properties(scope_name, github_pat)
             code_scanning.write_repo_cs_list(cs_list, properties)
         # dependabot alerts
         if "dependabot" in features:
             try:
                 dependabot_list = dependabot.list_repo_dependabot_alerts(api_endpoint, github_pat, scope_name)
                 # Call get_repo_properties for the repo and pass the properties to the write function
-                properties = api_helpers.get_repo_properties(scope_name)
+                properties = api_helpers.get_repo_properties(scope_name, github_pat)
                 dependabot.write_repo_dependabot_list(dependabot_list, properties)
             except Exception as e:
                 if any(x in str(e).lower() for x in dependabot_disabled_strings):
@@ -156,7 +159,7 @@ if __name__ == "__main__":
             try:
                 secrets_list = secret_scanning.get_repo_ss_alerts(api_endpoint, github_pat, scope_name)
                 # Call get_repo_properties for the repo and pass the properties to the write function
-                properties = api_helpers.get_repo_properties(scope_name)
+                properties = api_helpers.get_repo_properties(scope_name, github_pat)
                 secret_scanning.write_repo_ss_list(secrets_list, properties)
             except Exception as e:
                 if any(x in str(e).lower() for x in secret_scanning_disabled_strings):
