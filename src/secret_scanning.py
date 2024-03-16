@@ -23,12 +23,13 @@ def get_repo_ss_alerts(api_endpoint, github_pat, repo_name):
     return ss_alerts
 
 
-def write_repo_ss_list(secrets_list):
+def write_repo_ss_list(secrets_list, properties):
     """
     Write the list of repository secret scanning alerts to a csv file.
 
     Inputs:
     - List of secret scanning alerts
+    - Dictionary of custom property names and values
 
     Outputs:
     - CSV file of secret scanning alerts
@@ -39,6 +40,7 @@ def write_repo_ss_list(secrets_list):
     # Write secret scanning alerts to csv file
     with open("secrets_list.csv", "w") as f:
         writer = csv.writer(f)
+        # Append the custom property names to the header row
         writer.writerow(
             [
                 "number",
@@ -53,8 +55,10 @@ def write_repo_ss_list(secrets_list):
                 "secret_type",
                 "secret_type_display_name",
             ]
+            + list(properties.keys())
         )
         for alert in secrets_list:
+            # Append the custom property values to the data row
             writer.writerow(
                 [
                     alert["number"],
@@ -69,6 +73,7 @@ def write_repo_ss_list(secrets_list):
                     alert["secret_type"],
                     alert["secret_type_display_name"],
                 ]
+                + list(properties.values())
             )
 
 
@@ -90,12 +95,13 @@ def get_org_ss_alerts(api_endpoint, github_pat, org_name):
     return ss_alerts
 
 
-def write_org_ss_list(secrets_list):
+def write_org_ss_list(secrets_list, properties):
     """
     Write the list of organization secret scanning alerts to a csv file.
 
     Inputs:
     - List of secret scanning alerts
+    - Dictionary of custom property names and values
 
     Outputs:
     - CSV file of secret scanning alerts
@@ -106,6 +112,7 @@ def write_org_ss_list(secrets_list):
     # Write secret scanning alerts to csv file
     with open("secrets_list.csv", "w") as f:
         writer = csv.writer(f)
+        # Append the custom property names to the header row
         writer.writerow(
             [
                 "number",
@@ -127,8 +134,10 @@ def write_org_ss_list(secrets_list):
                 "repo_isfork",
                 "repo_isprivate",
             ]
+            + list(properties.keys())
         )
         for alert in secrets_list:
+            # Append the custom property values to the data row
             writer.writerow(
                 [
                     alert["number"],
@@ -150,6 +159,7 @@ def write_org_ss_list(secrets_list):
                     str(alert["repository"]["fork"]),
                     str(alert["repository"]["private"]),
                 ]
+                + list(properties.values())
             )
 
 
@@ -172,12 +182,13 @@ def get_enterprise_ss_alerts(api_endpoint, github_pat, enterprise_slug):
     return ss_alerts
 
 
-def write_enterprise_ss_list(secrets_list):
+def write_enterprise_ss_list(secrets_list, properties):
     """
     Write the list of enterprise secret scanning alerts to a csv file.
 
     Inputs:
     - List of secret scanning alerts
+    - Dictionary of custom property names and values
 
     Outputs:
     - CSV file of secret scanning alerts
@@ -188,6 +199,7 @@ def write_enterprise_ss_list(secrets_list):
     # Write secret scanning alerts to csv file
     with open("secrets_list.csv", "w") as f:
         writer = csv.writer(f)
+        # Append the custom property names to the header row
         writer.writerow(
             [
                 "number",
@@ -209,8 +221,10 @@ def write_enterprise_ss_list(secrets_list):
                 "repo_isfork",
                 "repo_isprivate",
             ]
+            + list(properties.keys())
         )
         for alert in secrets_list:
+            # Append the custom property values to the data row
             writer.writerow(
                 [
                     alert["number"],
@@ -232,4 +246,5 @@ def write_enterprise_ss_list(secrets_list):
                     str(alert["repository"]["fork"]),
                     str(alert["repository"]["private"]),
                 ]
+                + list(properties.values())
             )

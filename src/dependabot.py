@@ -23,18 +23,20 @@ def list_repo_dependabot_alerts(api_endpoint, github_pat, repo_name):
     return dependabot_alerts
 
 
-def write_repo_dependabot_list(dependabot_list):
+def write_repo_dependabot_list(dependabot_list, properties):
     """
     Write the list of dependabot alerts to a CSV file.
 
     Inputs:
     - List of dependabot alerts
+    - Dictionary of custom property names and values
 
     Outputs:
     - CSV file of dependabot alerts
     """
     with open("dependabot_list.csv", "w") as f:
         writer = csv.writer(f)
+        # Append the custom property names to the header row
         writer.writerow(
             [
                 "number",
@@ -54,8 +56,10 @@ def write_repo_dependabot_list(dependabot_list):
                 "cve_id",
                 "cvss_score",
             ]
+            + list(properties.keys())
         )
         for alert in dependabot_list:
+            # Append the custom property values to the data row
             writer.writerow(
                 [
                     alert["number"],
@@ -75,6 +79,7 @@ def write_repo_dependabot_list(dependabot_list):
                     alert["security_advisory"]["cve_id"],
                     alert["security_advisory"]["cvss"]["score"],
                 ]
+                + list(properties.values())
             )
 
 
@@ -115,18 +120,20 @@ def list_enterprise_dependabot_alerts(api_endpoint, github_pat, enterprise_slug)
     return dependabot_alerts
 
 
-def write_org_or_enterprise_dependabot_list(dependabot_list):
+def write_org_or_enterprise_dependabot_list(dependabot_list, properties):
     """
     Write the list of dependabot alerts to a CSV file.
 
     Inputs:
     - List of dependabot alerts
+    - Dictionary of custom property names and values
 
     Outputs:
     - CSV file of dependabot alerts
     """
     with open("dependabot_list.csv", "w") as f:
         writer = csv.writer(f)
+        # Append the custom property names to the header row
         writer.writerow(
             [
                 "number",
@@ -153,8 +160,10 @@ def write_org_or_enterprise_dependabot_list(dependabot_list):
                 "repo_isfork",
                 "repo_isprivate",
             ]
+            + list(properties.keys())
         )
         for alert in dependabot_list:
+            # Append the custom property values to the data row
             writer.writerow(
                 [
                     alert["number"],
@@ -181,4 +190,5 @@ def write_org_or_enterprise_dependabot_list(dependabot_list):
                     str(alert["repository"]["fork"]),
                     str(alert["repository"]["private"]),
                 ]
+                + list(properties.values())
             )
